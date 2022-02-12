@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641275, b: 0.5748172, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641258, b: 0.5748172, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -431,6 +431,7 @@ GameObject:
   - component: {fileID: 150291165}
   - component: {fileID: 150291164}
   - component: {fileID: 150291163}
+  - component: {fileID: 150291166}
   m_Layer: 5
   m_Name: Beginner
   m_TagString: Untagged
@@ -501,7 +502,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 150291164}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 150291166}
+        m_TargetAssemblyTypeName: BeginnerSceneLoader, Assembly-CSharp
+        m_MethodName: LoadScene
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: BeginnerScreen
+          m_BoolArgument: 0
+        m_CallState: 1
+      - m_Target: {fileID: 150291166}
+        m_TargetAssemblyTypeName: BeginnerSceneLoader, Assembly-CSharp
+        m_MethodName: Vibrator
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
 --- !u!114 &150291164
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -540,6 +565,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 150291161}
   m_CullTransparentMesh: 1
+--- !u!114 &150291166
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 150291161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91973866a5a19b44896fc3fd6b45c078, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &155941963
 GameObject:
   m_ObjectHideFlags: 0
