@@ -9,11 +9,12 @@ public class ExitManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if(SceneManager.GetActiveScene().buildIndex == 0)
+            if (SceneManager.GetActiveScene().buildIndex == 0)
             {
                 Application.Quit();
             } else
             {
+                ScoreScript.scoreValue = 0;
                 SceneManager.LoadScene(0);
             }
         }
