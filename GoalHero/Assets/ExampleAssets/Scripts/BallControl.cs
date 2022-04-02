@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 
@@ -24,6 +26,7 @@ public class BallControl : MonoBehaviour
     private float duration;
     private bool directionChosen = false;
     private bool throwStarted = false;
+    bool timeKeeper;
 
     [SerializeField]
     GameObject ARCam;
@@ -35,6 +38,7 @@ public class BallControl : MonoBehaviour
 
     private void Start()
     {
+        timeKeeper = true;
         rb = gameObject.GetComponent<Rigidbody>();
         m_SessionOrigin = GameObject.Find("AR Session Origin").GetComponent<ARSessionOrigin>();
         ARCam = m_SessionOrigin.transform.Find("AR Camera").gameObject;
@@ -44,46 +48,54 @@ public class BallControl : MonoBehaviour
 
     public void Update()
     {
-        //we will start the touch of the screen,which will start the ball throw
-        if (Input.GetMouseButtonDown(0)) // run for mouse click as well as mobile touch 
+        if (timeKeeper==true)
         {
-            StartPosition = Input.mousePosition;
-            StartTime = Time.time;
-            throwStarted = true;
-            directionChosen = false;
+            //we will start the touch of the screen,which will start the ball throw
+            if (Input.GetMouseButtonDown(0)) // run for mouse click as well as mobile touch 
+            {
+                StartPosition = Input.mousePosition;
+                StartTime = Time.time;
+                throwStarted = true;
+                directionChosen = false;
+            }
+            // we have ended the touch of the screen, which will throw the ball 
+            else if (Input.GetMouseButtonUp(0))
+            {
+                endTime = Time.time;
+                duration = endTime - StartTime;
+                direction = Input.mousePosition - StartPosition;
+                directionChosen = true;
+            }
+
+            if (directionChosen)
+            {
+                rb.mass = 1;
+                rb.useGravity = true;
+
+                rb.AddForce(
+                    ARCam.transform.forward * m_Throwforce / duration +
+                    ARCam.transform.up * direction.y * m_ThrowDirectionY +
+                    ARCam.transform.right * direction.x * m_ThrowDirectionX);
+
+                StartTime = 0.0f;
+                duration = 0.0f;
+
+                StartPosition = new Vector3(0, 0, 0);
+                direction = new Vector3(0, 0, 0);
+
+                throwStarted = false;
+                directionChosen = false;
+
+                timeKeeper = false;
+                Thread thread = new Thread(preventDoubleTap);
+                thread.Start();
+            }
+            
+            //5 sec after throwing the ball we reset its location 
+            if (Time.time - endTime >= 5 && Time.time - endTime <= 6)
+                ResetBall();
         }
-        // we have ended the touch of the screen, which will throw the ball 
-        else if (Input.GetMouseButtonUp(0)) 
-        {
-            endTime = Time.time;
-            duration = endTime - StartTime;
-            direction = Input.mousePosition - StartPosition;
-            directionChosen = true;
-        }
-
-        if(directionChosen)
-        {
-            rb.mass = 1;
-            rb.useGravity = true;
-
-            rb.AddForce(
-                ARCam.transform.forward * m_Throwforce / duration +
-                ARCam.transform.up * direction.y * m_ThrowDirectionY +
-                ARCam.transform.right * direction.x * m_ThrowDirectionX);
-
-            StartTime = 0.0f;
-            duration = 0.0f;
-
-            StartPosition = new Vector3(0, 0, 0);
-            direction = new Vector3(0, 0, 0);
-
-            throwStarted = false;
-            directionChosen = false;
-        }
-
-        //5 sec after throwing the ball we reset its location 
-        if (Time.time - endTime >= 5 && Time.time - endTime<=6)
-            ResetBall();
+        
     }
     public void ResetBall()
     {
@@ -96,5 +108,14 @@ public class BallControl : MonoBehaviour
         Vector3 ballPos = ARCam.transform.position + ARCam.transform.forward * m_BallCameraOffset.z
             + ARCam.transform.up * m_BallCameraOffset.y;
         transform.position = ballPos;
+    }
+
+    public void preventDoubleTap()
+    {
+        {
+            DateTime dt = DateTime.Now;
+            while (DateTime.Now < dt.AddSeconds(5)) { }
+            timeKeeper = true;
+        }
     }
 }
